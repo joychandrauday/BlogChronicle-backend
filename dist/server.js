@@ -18,19 +18,13 @@ const config_1 = __importDefault(require("./app/config"));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log("Connecting to MongoDB...");
-            yield mongoose_1.default.connect(config_1.default.database_url, {
-                serverSelectionTimeoutMS: 10000,
-                socketTimeoutMS: 45000,
-            });
-            console.log("Connected to MongoDB successfully!");
+            yield mongoose_1.default.connect(config_1.default.database_url);
             app_1.default.listen(config_1.default.port, () => {
                 console.log(`BlogChronicle app is listening on port ${config_1.default.port}`);
             });
         }
         catch (err) {
-            console.error("Error connecting to MongoDB:", err);
-            process.exit(1); // Exit the application if the database connection fails
+            console.log(err);
         }
     });
 }
