@@ -20,7 +20,7 @@ function main() {
         try {
             yield mongoose_1.default.connect(config_1.default.database_url);
             app_1.default.listen(config_1.default.port, () => {
-                console.log(`Stationary app listening on port ${config_1.default.port}`);
+                console.log(`BlogChronicle app is listening on port ${config_1.default.port}`);
             });
         }
         catch (err) {
@@ -29,3 +29,4 @@ function main() {
     });
 }
 main();
+exports.default = app_1.default;

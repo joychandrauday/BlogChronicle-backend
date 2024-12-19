@@ -1,4 +1,7 @@
 export class ZodValidationError extends Error {
+    errors(errors: any): string | undefined {
+        throw new Error("Method not implemented.");
+    }
     constructor(message: string = "Invalid data format or missing fields") {
         super(message);
         this.name = "ZodValidationError";

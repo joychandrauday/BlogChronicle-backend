@@ -148,10 +148,14 @@ const deletingAnyBlog = async (req: Request, res: Response, next: NextFunction) 
     const blog = await blogModel.findById(req.params.id);
 
     if (!blog) {
-      throw new NotFoundError("Blog not found");
+      res.status(404).json({
+        success: true,
+        message: "Blog Not found",
+        statusCode: 404,
+      });
     }
 
-    await blogService.deleteBlogById(blog.id);
+    await blogService.deleteBlogById(blog?.id);
 
     res.status(200).json({
       success: true,
@@ -162,6 +166,8 @@ const deletingAnyBlog = async (req: Request, res: Response, next: NextFunction) 
     next(error);
   }
 }
+
+
 
 // update blog by id
 
