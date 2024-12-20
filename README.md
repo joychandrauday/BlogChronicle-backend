@@ -1,6 +1,6 @@
-# Student Stationary Backend
+# Blog Chronicle Backend
 
-A powerful Node.js application designed to deliver seamless functionality with a reliable backend architecture. The project includes robust features for managing data and APIs, ensuring optimal performance and scalability.
+A powerful Node.js application designed to deliver seamless functionality with a reliable backend architecture. The project includes robust features for managing data and APIs, ensuring optimal performance and scalability using mongoose and node.js.
 Checkout a demo frontend: [live frontend website](https://student-stationary-frontend.vercel.app/)
 
 ## Features
@@ -11,6 +11,7 @@ Checkout a demo frontend: [live frontend website](https://student-stationary-fro
 - 📧 **Order Processing**: Handles customer orders with validation and stock updates.
 - 📊 **Scalable Architecture**: Built for extensibility with modular design.
 - 🔐 **Secure Configuration**: Environment variables ensure sensitive data protection.
+- 🔐 **Secure Dataflaw**: The JWT authenticatiotion makes sure about data security.
 - 📂 **Built-in Timestamps**: Automatically track data creation and updates.
 - 🚀 **Ready for Deployment**: Preconfigured for Vercel or other deployment platforms.
 
@@ -39,11 +40,11 @@ Ensure the following are installed on your system:
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/joychandrauday/student-stationary-backend.git
+    git clone https://github.com/joychandrauday/BlogChronicle-backend.git
     ```
 2.  Navigate to the project directory
     ```bash
-    cd student-stationary-backend
+    cd BlogChronicle-backend
     ```
 3.  Install dependencies:
 
@@ -78,20 +79,27 @@ Ensure the following are installed on your system:
 
 ## API Endpoints
 
-### Product Management
+### Auth Management
 
-- **GET** `/api/products`: Retrieve all products.
-- **POST** `/api/products`: Add a new product.
-- **PATCH** `/api/products/:id`: Update an existing product.
-- **DELETE** `/api/products/:id`: Delete a product.
+- **POST** `/api/auth/register`: Registering or creating new user.
+- **POST** `/api/auth/login`: Log in a registered user.
 
-### Order Management
+### Blog Management
 
-- **POST** `/api/orders`: Create a new order.
-- **GET** `/api/orders/:id`: Retrieve an order.
-### Total Revenue
+- **POST** `/api/blogs`: Create a new blog(you will need to sign in and a access token to create a new blog post).
+- **GET** `/api/blogs?search=&sortBy=createdAt&sortOrder=desc&filter=(authorId)`: Retrieve all blog posts from database by queries and params.
+- **PATCH** `/api/blogs/:id`: Update a Blog post.
+- **DELETE** `/api/blogs/:id`: Delete a Blog post.
 
-- **GET** `/api/orders/revenue`: Retrieve an order.
+
+### User Management
+- **GET** `/api/users`: Retrieve all users from database.
+- **GET** `/api/users/:id`: Retrieve a single user.
+
+### Admin Routes
+- **PATCH** `/api/admin/users/:userId/block`: Admin route To block a user from databese.
+- **DELETE** `/api/admin/blogs/:blogId`: Admin route for Deleting any existing blog from database.
+
 
 ## Project Structure
 
