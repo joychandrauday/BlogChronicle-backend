@@ -1,7 +1,7 @@
 # Blog Chronicle Backend
 
 A powerful Node.js application designed to deliver seamless functionality with a reliable backend architecture. The project includes robust features for managing data and APIs, ensuring optimal performance and scalability using mongoose and node.js.
-Checkout a demo frontend: [live frontend website](https://student-stationary-frontend.vercel.app/)
+Checkout a demo frontend: [live frontend website](https://blogchronicle.netlify.app/)
 
 ## Features
 
