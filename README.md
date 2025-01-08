@@ -136,9 +136,7 @@ We welcome contributions to enhance this project!
     ```
 
 ## Contact
-
 For questions or feedback, contact:
-
 - **Name**: Joy Chandra Uday
 - **Email**: joychandrauda@gmail.com
 - **Website**: [https://joychandrauday.web.app/](https://joychandrauday.web.app/)
