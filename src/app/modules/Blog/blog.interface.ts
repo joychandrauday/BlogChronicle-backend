@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 export type IBlog = {
     title: string,
     content: string,
-    author: Types.ObjectId | string | null,
+    author: string | string | null,
     isPublished: boolean,
+    featuredImage: string | null
 }

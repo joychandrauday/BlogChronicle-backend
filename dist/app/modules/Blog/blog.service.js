@@ -26,6 +26,11 @@ const getblogs = (...args_1) => __awaiter(void 0, [...args_1], void 0, function*
         .sort(sort) // Apply sorting
         .populate("author", "name email"); // Populate author details (optional)
 });
+// fet single blogs
+const getBlogById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield blog_model_1.blogModel.findById(id).populate("author", "name email");
+});
+// search blog by title or content
 // delete blog by id
 const deleteBlogById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield blog_model_1.blogModel.findByIdAndDelete(id);
@@ -43,4 +48,5 @@ exports.blogService = {
     getblogs,
     updateBlogInDB,
     deleteBlogById,
+    getBlogById
 };

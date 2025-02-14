@@ -1,33 +1,19 @@
 // 3. Controller
 
 import { NextFunction, Request, Response } from 'express'
-import { blogValidationSchema, validateBlog } from './blog.validation';
 import { blogService } from './blog.service';
-import { AuthenticationError, NotFoundError, ValidationError, ZodValidationError } from '../Error/error';
-import jwt from 'jsonwebtoken';
+import { AuthenticationError, NotFoundError } from '../Error/error';
 import { blogModel } from './blog.model';
-import { userService } from '../User/user.service';
-const JWT_SECRET = process.env.JWT_SECRET || 'defaultSecretKey';
+
 
 // adding blog to database
 const addingBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.user;
-
-    if (!user) {
-      throw new AuthenticationError("User not authenticated");
-    }
     const blogData = {
       ...req.body,
-      author: user.id, // Include the author field from decoded token
     };
 
-    const validation = validateBlog(blogData);
-    if (!validation.success) {
-      throw new ZodValidationError(validation.error.message);
-    }
-
-    const addedBlog = await blogService.addAnewBlog(validation.data);
+    const addedBlog = await blogService.addAnewBlog(blogData);
 
     res.status(201).json({
       success: true,
@@ -87,8 +73,7 @@ const gettingblogs = async (req: Request, res: Response, next: NextFunction) => 
 
 const gettingSingleBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const blog = await blogModel.findById(req.params.id);
-
+    const blog = await blogService.getBlogById(req.params.id)
     if (!blog) {
       throw new NotFoundError("Blog not found");
     }
@@ -103,28 +88,35 @@ const gettingSingleBlog = async (req: Request, res: Response, next: NextFunction
     next(error); // Pass to global error handler
   }
 };
+// get blogs by author id
 
+const gettingBlogsByAuthorId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    console.log(req.params.id);
+    const blogs = await blogModel.find({ author: req.params.id });
+
+    if (!blogs.length) {
+      throw new NotFoundError("No blogs found for this author");
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Blogs fetched successfully",
+      statusCode: 200,
+      data: blogs,
+    });
+  } catch (error) {
+    next(error); // Pass to global error handler
+  }
+};
 
 // deleting blog from the database 
 
 const deletingBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.user;
 
-    if (!user) {
-      throw new AuthenticationError("User not authenticated");
-    }
 
-    const blog = await blogModel.findById(req.params.id);
-
-    if (!blog) {
-      throw new NotFoundError("Blog not found");
-    }
-    console.log(blog.author?.toString(), user.id);
-    if (blog.author?.toString() !== user.id) {
-      throw new AuthenticationError("User not authorized to delete this blog");
-    }
-    await blogService.deleteBlogById(blog.id);
+    await blogService.deleteBlogById(req.params.id);
 
     res.status(200).json({
       success: true,
@@ -173,24 +165,16 @@ const deletingAnyBlog = async (req: Request, res: Response, next: NextFunction) 
 
 const updatingBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.user;
-
-    if (!user) {
-      throw new AuthenticationError("User not authenticated");
-    }
-
     const blog = await blogModel.findById(req.params.id);
 
     if (!blog) {
       throw new NotFoundError("Blog not found");
     }
 
-    if (blog.author?.toString() !== user.id) {
-      throw new AuthenticationError("You are not authorized to update this blog");
-    }
 
+    console.log(req.body)
     const updatedBlog = await blogService.updateBlogInDB(req.params.id, req.body);
-
+    console.log(updatedBlog)
     res.status(200).json({
       success: true,
       message: "Blog updated successfully",
@@ -210,5 +194,6 @@ export const blogController = {
   gettingSingleBlog,
   deletingBlog,
   deletingAnyBlog,
-  updatingBlog
+  updatingBlog,
+  gettingBlogsByAuthorId
 }

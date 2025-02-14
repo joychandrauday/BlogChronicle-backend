@@ -11,24 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogController = void 0;
-const blog_validation_1 = require("./blog.validation");
 const blog_service_1 = require("./blog.service");
 const error_1 = require("../Error/error");
 const blog_model_1 = require("./blog.model");
-const JWT_SECRET = process.env.JWT_SECRET || 'defaultSecretKey';
 // adding blog to database
 const addingBlog = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = req.user;
-        if (!user) {
-            throw new error_1.AuthenticationError("User not authenticated");
-        }
-        const blogData = Object.assign(Object.assign({}, req.body), { author: user.id });
-        const validation = (0, blog_validation_1.validateBlog)(blogData);
-        if (!validation.success) {
-            throw new error_1.ZodValidationError(validation.error.message);
-        }
-        const addedBlog = yield blog_service_1.blogService.addAnewBlog(validation.data);
+        const blogData = Object.assign({}, req.body);
+        const addedBlog = yield blog_service_1.blogService.addAnewBlog(blogData);
         res.status(201).json({
             success: true,
             message: "Blog created successfully",
@@ -83,7 +73,7 @@ const gettingblogs = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
 // getting single blog
 const gettingSingleBlog = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const blog = yield blog_model_1.blogModel.findById(req.params.id);
+        const blog = yield blog_service_1.blogService.getBlogById(req.params.id);
         if (!blog) {
             throw new error_1.NotFoundError("Blog not found");
         }
@@ -98,23 +88,29 @@ const gettingSingleBlog = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         next(error); // Pass to global error handler
     }
 });
+// get blogs by author id
+const gettingBlogsByAuthorId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        console.log(req.params.id);
+        const blogs = yield blog_model_1.blogModel.find({ author: req.params.id });
+        if (!blogs.length) {
+            throw new error_1.NotFoundError("No blogs found for this author");
+        }
+        res.status(200).json({
+            success: true,
+            message: "Blogs fetched successfully",
+            statusCode: 200,
+            data: blogs,
+        });
+    }
+    catch (error) {
+        next(error); // Pass to global error handler
+    }
+});
 // deleting blog from the database 
 const deletingBlog = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     try {
-        const user = req.user;
-        if (!user) {
-            throw new error_1.AuthenticationError("User not authenticated");
-        }
-        const blog = yield blog_model_1.blogModel.findById(req.params.id);
-        if (!blog) {
-            throw new error_1.NotFoundError("Blog not found");
-        }
-        console.log((_a = blog.author) === null || _a === void 0 ? void 0 : _a.toString(), user.id);
-        if (((_b = blog.author) === null || _b === void 0 ? void 0 : _b.toString()) !== user.id) {
-            throw new error_1.AuthenticationError("User not authorized to delete this blog");
-        }
-        yield blog_service_1.blogService.deleteBlogById(blog.id);
+        yield blog_service_1.blogService.deleteBlogById(req.params.id);
         res.status(200).json({
             success: true,
             message: "Blog deleted successfully",
@@ -153,20 +149,14 @@ const deletingAnyBlog = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
 });
 // update blog by id
 const updatingBlog = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
-        const user = req.user;
-        if (!user) {
-            throw new error_1.AuthenticationError("User not authenticated");
-        }
         const blog = yield blog_model_1.blogModel.findById(req.params.id);
         if (!blog) {
             throw new error_1.NotFoundError("Blog not found");
         }
-        if (((_a = blog.author) === null || _a === void 0 ? void 0 : _a.toString()) !== user.id) {
-            throw new error_1.AuthenticationError("You are not authorized to update this blog");
-        }
+        console.log(req.body);
         const updatedBlog = yield blog_service_1.blogService.updateBlogInDB(req.params.id, req.body);
+        console.log(updatedBlog);
         res.status(200).json({
             success: true,
             message: "Blog updated successfully",
@@ -185,5 +175,6 @@ exports.blogController = {
     gettingSingleBlog,
     deletingBlog,
     deletingAnyBlog,
-    updatingBlog
+    updatingBlog,
+    gettingBlogsByAuthorId
 };

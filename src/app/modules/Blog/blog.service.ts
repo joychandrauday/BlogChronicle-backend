@@ -19,6 +19,13 @@ const getblogs = async (query: any = {}, sort: any = {}) => {
     .sort(sort) // Apply sorting
     .populate("author", "name email"); // Populate author details (optional)
 };
+// fet single blogs
+
+const getBlogById = async (id: string) => {
+  return await blogModel.findById(id).populate("author", "name email");
+};
+
+// search blog by title or content
 // delete blog by id
 
 const deleteBlogById = async (id: string) => {
@@ -40,4 +47,5 @@ export const blogService = {
   getblogs,
   updateBlogInDB,
   deleteBlogById,
+  getBlogById
 }

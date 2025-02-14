@@ -7,8 +7,9 @@ const mongoose_1 = require("mongoose");
 const blogSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
-    author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    author: { type: String, required: true },
     isPublished: { type: Boolean, default: true },
+    featuredImage: { type: String, default: 'https://designshack.net/wp-content/uploads/placeholder-image.png' }
 }, {
     timestamps: true,
 });

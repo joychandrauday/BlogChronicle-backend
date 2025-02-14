@@ -76,7 +76,8 @@ const logInUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         if (!isMatch) {
             throw new error_1.AuthenticationError("Invalid credentials!");
         }
-        const token = (0, jwt_utils_1.generateToken)({ id: existingUser._id, email: existingUser.email, role: existingUser.role });
+        console.log(existingUser);
+        const token = (0, jwt_utils_1.generateToken)({ email: existingUser.email, role: existingUser.role });
         return res.status(200).json({
             success: true,
             message: 'Login successful',

@@ -68,7 +68,8 @@ const logInUser = async (req: Request, res: Response, next: NextFunction) => {
     if (!isMatch) {
       throw new AuthenticationError("Invalid credentials!")
     }
-    const token = generateToken({ id: existingUser._id, email: existingUser.email, role: existingUser.role });
+    console.log(existingUser);
+    const token = generateToken({ email: existingUser.email, role: existingUser.role });
     return res.status(200).json({
       success: true,
       message: 'Login successful',
