@@ -13,5 +13,5 @@ router.post('/', project_controller_1.projectController.createProject);
 router.get('/', project_controller_1.projectController.getProjects);
 router.get('/:id', project_controller_1.projectController.getSingleProject);
 router.patch('/:id', project_controller_1.projectController.editProject);
-router.delete('/', project_controller_1.projectController.deleteProject);
+router.delete('/:id', project_controller_1.projectController.deleteProject);
 exports.projectRoutes = router;

@@ -8,6 +8,6 @@ router.post('/', projectController.createProject)
 router.get('/', projectController.getProjects)
 router.get('/:id', projectController.getSingleProject as unknown as express.RequestHandler)
 router.patch('/:id', projectController.editProject as unknown as express.RequestHandler)
-router.delete('/', projectController.deleteProject as unknown as express.RequestHandler)
+router.delete('/:id', projectController.deleteProject as unknown as express.RequestHandler)
 
 export const projectRoutes = router
