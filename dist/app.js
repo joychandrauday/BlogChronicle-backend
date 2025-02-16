@@ -15,7 +15,7 @@ const project_routes_1 = require("./app/modules/Project/project.routes");
 const app = (0, express_1.default)();
 // Middleware
 app.use(express_1.default.json());
-const allowedOrigins = ['http://localhost:3000']; // or use a regex if you have multiple origins
+const allowedOrigins = ['http://localhost:3000', 'https://joychandrauday.vercel.app']; // or use a regex if you have multiple origins
 app.use((0, cors_1.default)({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {

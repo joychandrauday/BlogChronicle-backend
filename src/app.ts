@@ -14,7 +14,7 @@ const app: Application = express();
 
 // Middleware
 app.use(express.json());
-const allowedOrigins = ['http://localhost:3000']; // or use a regex if you have multiple origins
+const allowedOrigins = ['http://localhost:3000', 'https://joychandrauday.vercel.app']; // or use a regex if you have multiple origins
 
 app.use(
   cors({

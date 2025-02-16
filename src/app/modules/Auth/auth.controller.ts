@@ -1,18 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import { userValidationSchema } from "../User/user.validation";
 import { userModel } from "../User/user.model";
 import bcrypt from "bcrypt";
 import { authService } from "./auth.service";
 import { z } from "zod";
-import { AuthenticationError, ValidationError } from "../Error/error";
+import { AuthenticationError } from "../Error/error";
 import { generateToken } from "../Utilities/jwt.utils";
 
 // 1. tegistering a new user to the database
 const addUserToDB = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Validate user input using Zod
-    const userData = userValidationSchema.parse(req.body);
-
+    const userData = {
+      name: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+    }
     // Check if the user already exists
     const existingUser = await authService.getUserByEmail(userData.email);
     if (existingUser) {
@@ -28,7 +30,8 @@ const addUserToDB = async (req: Request, res: Response, next: NextFunction) => {
     // Create a new user
     const newUser = new userModel({
       ...userData,
-      password: hashedPassword, // Save the hashed password
+      password: hashedPassword,
+      role: 'user'
     });
     const user = await authService.addUserToDB(newUser);
     console.log(user);
@@ -61,6 +64,7 @@ const logInUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body
     const existingUser = await authService.getUserByEmail(email);
+    console.log(existingUser);
     if (!existingUser) {
       throw new AuthenticationError('Invalid credentials!')
     }
@@ -68,14 +72,17 @@ const logInUser = async (req: Request, res: Response, next: NextFunction) => {
     if (!isMatch) {
       throw new AuthenticationError("Invalid credentials!")
     }
-    console.log(existingUser);
-    const token = generateToken({ email: existingUser.email, role: existingUser.role });
+    const token = generateToken({ id: existingUser._id, email: existingUser.email, role: existingUser.role });
     return res.status(200).json({
       success: true,
       message: 'Login successful',
       statusCode: 200,
       data: {
-        token
+        token,
+        id: existingUser._id,
+        email: existingUser.email,
+        name: existingUser.name,
+        role: existingUser.role,
       },
     });
   } catch (error) {

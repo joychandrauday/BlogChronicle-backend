@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authController = void 0;
-const user_validation_1 = require("../User/user.validation");
 const user_model_1 = require("../User/user.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const auth_service_1 = require("./auth.service");
@@ -24,7 +23,11 @@ const jwt_utils_1 = require("../Utilities/jwt.utils");
 const addUserToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate user input using Zod
-        const userData = user_validation_1.userValidationSchema.parse(req.body);
+        const userData = {
+            name: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+        };
         // Check if the user already exists
         const existingUser = yield auth_service_1.authService.getUserByEmail(userData.email);
         if (existingUser) {
@@ -36,7 +39,7 @@ const addUserToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         // Hash the password
         const hashedPassword = yield bcrypt_1.default.hash(userData.password, 10);
         // Create a new user
-        const newUser = new user_model_1.userModel(Object.assign(Object.assign({}, userData), { password: hashedPassword }));
+        const newUser = new user_model_1.userModel(Object.assign(Object.assign({}, userData), { password: hashedPassword, role: 'user' }));
         const user = yield auth_service_1.authService.addUserToDB(newUser);
         console.log(user);
         res.status(201).json({
@@ -69,6 +72,7 @@ const logInUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     try {
         const { email, password } = req.body;
         const existingUser = yield auth_service_1.authService.getUserByEmail(email);
+        console.log(existingUser);
         if (!existingUser) {
             throw new error_1.AuthenticationError('Invalid credentials!');
         }
@@ -76,14 +80,17 @@ const logInUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function
         if (!isMatch) {
             throw new error_1.AuthenticationError("Invalid credentials!");
         }
-        console.log(existingUser);
-        const token = (0, jwt_utils_1.generateToken)({ email: existingUser.email, role: existingUser.role });
+        const token = (0, jwt_utils_1.generateToken)({ id: existingUser._id, email: existingUser.email, role: existingUser.role });
         return res.status(200).json({
             success: true,
             message: 'Login successful',
             statusCode: 200,
             data: {
-                token
+                token,
+                id: existingUser._id,
+                email: existingUser.email,
+                name: existingUser.name,
+                role: existingUser.role,
             },
         });
     }
